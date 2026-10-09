@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080a0c">
+  <meta name="description" content="Insert info here.">
+  <title>Insert info here | Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body class="home-page" data-ascii-gif="assets/black-hole.gif" data-ascii-gif-mobile="assets/black-hole-mobile.gif">
+  <canvas class="ascii-background" aria-hidden="true"></canvas>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <aside class="site-sidebar">
+    <a class="wordmark" href="index.html" aria-current="page">Home</a>
+    <p class="sidebar-label">Navigation</p>
+    <nav class="site-nav" aria-label="Main navigation">
+      <div class="nav-disclosure nav-projects">
+        <div class="nav-projects-row">
+          <a class="nav-link" href="projects.html">Projects</a>
+          <button class="submenu-toggle" type="button" aria-expanded="false" aria-controls="project-submenu" data-menu-name="project links" aria-label="Show project links"><span aria-hidden="true">⌄</span></button>
+        </div>
+        <div class="project-submenu" id="project-submenu" hidden>
+          <a href="projects.html#project-1">Project 1</a>
+          <a href="projects.html#project-2">Project 2</a>
+          <a href="projects.html#project-3">Project 3</a>
+          <a href="projects.html#project-4">Project 4</a>
+          <a href="projects.html#project-5">Project 5</a>
+        </div>
+      </div>
+      <div class="nav-disclosure nav-about">
+        <div class="nav-projects-row">
+          <a class="nav-link" href="about.html">About me</a>
+          <button class="submenu-toggle" type="button" aria-expanded="false" aria-controls="about-submenu" data-menu-name="About me sections" aria-label="Show About me sections"><span aria-hidden="true">⌄</span></button>
+        </div>
+        <div class="project-submenu about-submenu" id="about-submenu" hidden>
+          <a href="about.html#experience">Experience</a>
+          <a href="about.html#education">Education</a>
+          <a href="about.html#certifications">Certifications</a>
+          <a href="about.html#interests">Interests</a>
+        </div>
+      </div>
+      <a class="nav-link" href="contact.html">Contact</a>
+    </nav>
+  </aside>
+
+  <main class="site-main" id="main">
+    <section class="home-section" aria-labelledby="home-title">
+      <div class="home-content">
+        <h1 id="home-title">Andrew<br>Mccaffrey</h1>
+        <p class="home-subtitle">Robotics Engineer</p>
+        <ul class="home-bio">
+          <li>Third year robotics engineering student</li>
+          <li>Passionate about biomimetic robotics and control systems</li>
+          <li>Open to internship or a job in industry</li>
+        </ul>
+        <a class="section-link" href="projects.html">View projects <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+    <footer class="site-footer"><span>© <span id="year">2026</span></span><span>Insert info here</span></footer>
+  </main>
+</body>
+</html>
