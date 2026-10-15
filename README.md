@@ -1,6 +1,6 @@
-# Portfolio Template
+# Portfolio Website
 
-A responsive portfolio template with a dark theme, left-side navigation, fixed per-page GIF-to-colored-ASCII backgrounds, and editable placeholder content. Built with plain HTML, CSS, and JavaScript; there is no build step or package installation.
+A responsive portfolio website with a dark theme, left-side navigation, fixed per-page GIF-to-colored-ASCII backgrounds, and editable placeholder content. Built with plain HTML, CSS, and JavaScript; there is no build step or package installation.
 
 ## Run it
 
