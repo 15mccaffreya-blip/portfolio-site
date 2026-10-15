@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
 </head>
-<body data-ascii-gif="assets/black-hole.gif">
+<body data-ascii-gif="assets/spinning portrait.gif" data-ascii-key-background="black" data-ascii-layout="portrait" data-ascii-saturation="1.45">
   <canvas class="ascii-background" aria-hidden="true"></canvas>
   <a class="skip-link" href="#main">Skip to content</a>
   <aside class="site-sidebar">
@@ -51,16 +51,127 @@
     <section class="home-section about-hero" aria-labelledby="about-title">
       <div class="home-content">
         <h1 id="about-title">About me<span class="blue-period">.</span></h1>
-        <p class="about-bio">I build robotics and software projects, including custom actuators, FOC motor control, a biomimetic dog, logistics robots, IoT alarms, and robot mapping and collision avoidance. This work has strengthened my teamwork, communication, organisation, problem-solving, and critical thinking, alongside experience with computer vision, ROS 2, Gazebo, STM32, CAN, robot kinematics, and robotic foundation models.</p>
+        <p class="about-bio">Over the past five years, I have been working as a chef to support my education, strengthening my communication, time management, and leadership skills. I have also gained hands-on experience in my second jobs as a farmhand and motorcycle mechanic, broadening my practical skills and problem-solving abilities. In my spare time, I work on my motorbike and personal projects, play logistics games such as Factorio, and enjoy travelling.</p>
       </div>
     </section>
     <div class="project-stack about-stack" aria-label="About me sections">
-      <section class="project-case about-case" id="experience" aria-labelledby="experience-title"><div class="project-case-inner"><header class="case-heading"><h2 id="experience-title">Experience</h2></header></div></section>
-      <section class="project-case about-case" id="education" aria-labelledby="education-title"><div class="project-case-inner"><header class="case-heading"><h2 id="education-title">Education</h2></header></div></section>
-      <section class="project-case about-case" id="certifications" aria-labelledby="certifications-title"><div class="project-case-inner"><header class="case-heading"><h2 id="certifications-title">Certifications</h2></header></div></section>
-      <section class="project-case about-case" id="interests" aria-labelledby="interests-title"><div class="project-case-inner"><header class="case-heading"><h2 id="interests-title">Interests</h2></header></div></section>
+      <section class="project-case about-case experience-case" id="experience" aria-labelledby="experience-title">
+        <div class="project-case-inner">
+          <header class="case-heading"><h2 id="experience-title">Experience</h2></header>
+          <ol class="experience-list">
+            <li class="experience-item">
+              <div class="experience-logo"><img src="assets/everyman.png" alt="Everyman Media logo"></div>
+              <div class="experience-entry"><h3>Senior Chef</h3><p class="experience-employer">Everyman Media</p><p class="experience-meta">Aug 2026 – Present</p><ul class="experience-responsibilities"><li>Delegated tasks according to colleagues' skills and operational priorities.</li><li>Trained colleagues in procedures, techniques and safe working practices.</li><li>Optimised workflows to improve productivity and reduce wasted time.</li><li>Monitored inventory and identified shortages before they affected production.</li></ul></div>
+            </li>
+            <li class="experience-item">
+              <div class="experience-logo logo-farm"><img src="assets/farm-hand.png" alt="Oakstream Pastures logo"></div>
+              <div class="experience-entry"><h3>Farm Hand</h3><p class="experience-employer">Oakstream Pastures</p><p class="experience-meta">Jun 2026 – Aug 2026 · 3 mos<br>Burnley, England, United Kingdom</p><ul class="experience-responsibilities"><li>Create farm plans for optimal market garden growth</li><li>Track, manage and nurture market garden growth</li><li>Take care of all aspects of husbandry for multiple types of animals</li><li>Build farm infrastructure</li><li>Maintain and mend farm equipment</li></ul></div>
+            </li>
+            <li class="experience-item">
+              <div class="experience-logo"><img src="assets/everyman.png" alt="Everyman Media logo"></div>
+              <div class="experience-entry"><h3>Chef</h3><p class="experience-employer">Everyman Media</p><p class="experience-meta">Dec 2025 – Aug 2026 · 9 mos</p><ul class="experience-responsibilities"><li>Consistently delivered finished products within strict time constraints.</li><li>Prioritised tasks effectively to meet deadlines in a fast-paced environment.</li><li>Performed effectively in high-pressure environments while maintaining high standards.</li><li>Consistently maintained high standards of product quality and presentation.</li><li>Worked collaboratively across different roles to maintain operational efficiency.</li></ul></div>
+            </li>
+            <li class="experience-item">
+              <div class="experience-logo logo-motorcycle"><img src="assets/motorcycle-mechanic.png" alt="Freeman Repairs logo"></div>
+              <div class="experience-entry"><h3>Motorcycle Mechanic</h3><p class="experience-employer">Freeman Repairs</p><p class="experience-meta">Oct 2023 – Nov 2025 · 2 yrs 2 mos<br>Burnley, England, United Kingdom</p><ul class="experience-responsibilities"><li>Diagnosed electrical issues using relevant diagnostic equipment</li><li>Mechanical fault finding and part fitting</li><li>Vehicle servicing</li><li>Cosmetic work</li><li>Customer service</li></ul></div>
+            </li>
+            <li class="experience-item">
+              <div class="experience-logo logo-university"><img src="assets/robotics-class-rep.png" alt="University of Lancashire logo"></div>
+              <div class="experience-entry"><h3>Robotics Class Representative</h3><p class="experience-employer">University of Lancashire</p><p class="experience-meta">Sep 2024 – May 2025 · 9 mos<br>Preston, England, United Kingdom</p><ul class="experience-responsibilities"><li>Attended student union meetings on behalf of my peers and advocated for them.</li><li>Supported and mentored classmates.</li><li>Gathered feedback from classmates and relayed to faculty to improve the student experience.</li></ul></div>
+            </li>
+            <li class="experience-item">
+              <div class="experience-logo logo-digital"><img src="assets/digital-advantage.png" alt="Digital Advantage logo"></div>
+              <div class="experience-entry"><h3>Project Manager</h3><p class="experience-employer">Digital Advantage</p><p class="experience-meta">Mar 2019 – Apr 2019 · 2 mos<br>Barnoldswick, England, United Kingdom</p><p class="experience-description">Winner of the Digital Advantage Young Entrepreneurs challenge. Teams were tasked to come up with a business idea, develop the idea into an advertisement and product demonstration, and present it to a panel of judges. My team won first prize and was awarded £2000 to fund further development of the project. I was responsible for the initial app idea as well as project management and software development for the demo app.</p></div>
+            </li>
+            <li class="experience-item">
+              <div class="experience-logo logo-engineering"><img src="assets/engineering-because.png" alt="Engineering Because logo"></div>
+              <div class="experience-entry"><h3>Project Manager</h3><p class="experience-employer">Engineering Because</p><p class="experience-meta">Mar 2017 – Apr 2017 · 2 mos<br>Burnley, England, United Kingdom</p><p class="experience-description">Winner of the Engineering Because engineering challenge. Teams were tasked with designing and building a gripper/manipulator mechanism to move several 3D printed shapes from a set distance away whilst staying within a set budget. I was responsible for the initial design, budgeting decisions, certain construction decisions, mechanism design, and presenting.</p></div>
+            </li>
+            <li class="experience-item">
+              <div class="experience-logo logo-tomorrows-engineers"><img src="assets/tomorrows-engineers.png" alt="Tomorrow's Engineers logo"></div>
+              <div class="experience-entry"><h3>Lead Developer</h3><p class="experience-employer">Tomorrow's Engineers</p><p class="experience-meta">Sep 2016 – Feb 2017 · 6 mos<br>Barnoldswick, England, United Kingdom</p><p class="experience-description">Participant of the Tomorrow's Engineers EEP Robotics Challenge. Teams were tasked with building a small mars rover type robot to navigate a set course and move some objects to set targets. I was responsible for designing the gripper/ manipulator mechanism of the robot as well as being the primary programmer as well as organising meetups for the team, creating project timelines and delegating tasks based on everyone's strengths.</p></div>
+            </li>
+          </ol>
+        </div>
+      </section>
+      <section class="project-case about-case education-case" id="education" aria-labelledby="education-title">
+        <div class="project-case-inner">
+          <header class="case-heading"><h2 id="education-title">Education</h2></header>
+          <ol class="education-list">
+            <li class="education-item">
+              <div class="education-logo logo-university"><img src="assets/robotics-class-rep.png" alt="University of Lancashire logo"></div>
+              <div class="education-entry">
+                <h3>University of Lancashire</h3>
+                <p class="education-level">Bachelors Degree</p>
+                <div class="education-subjects">
+                  <h4>Subjects &amp; Grades</h4>
+                  <ul class="education-grades"><li><span>Robotics Engineering</span><span>Currently Studying</span></li></ul>
+                </div>
+              </div>
+            </li>
+            <li class="education-item">
+              <div class="education-logo logo-nelson"><img src="assets/nelson-and-colne.png" alt="Nelson and Colne College logo"></div>
+              <div class="education-entry">
+                <h3>Nelson and Colne College</h3>
+                <p class="education-level">A Levels</p>
+                <div class="education-subjects">
+                  <h4>Subjects &amp; Grades</h4>
+                  <ul class="education-grades"><li><span>Computer Science</span><span>B</span></li><li><span>Geography</span><span>B</span></li><li><span>Math</span><span>C</span></li></ul>
+                </div>
+              </div>
+            </li>
+            <li class="education-item">
+              <div class="education-logo logo-engineering"><img src="assets/engineering-because.png" alt="West Craven High School logo"></div>
+              <div class="education-entry">
+                <h3>West Craven High School</h3>
+                <p class="education-level">GCSEs</p>
+                <div class="education-subjects">
+                  <h4>Subjects &amp; Grades</h4>
+                  <ul class="education-grades"><li><span>Math</span><span>8</span></li><li><span>Triple Science</span><span>7</span></li><li><span>English</span><span>8</span></li><li><span>Computer Science</span><span>8</span></li><li><span>Geography</span><span>8</span></li><li><span>Art</span><span>6</span></li></ul>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+      <section class="project-case about-case certifications-case" id="certifications" aria-labelledby="certifications-title">
+        <div class="project-case-inner">
+          <header class="case-heading"><h2 id="certifications-title">Certifications</h2></header>
+          <ol class="certifications-list">
+            <li class="certification-item"><div class="certification-logo" aria-hidden="true">LOGO</div><div class="certification-entry"><h3>Insert certification title</h3><p class="certification-organisation">Insert organisation</p><p class="certification-date">Date awarded: Insert date</p></div></li>
+            <li class="certification-item"><div class="certification-logo" aria-hidden="true">LOGO</div><div class="certification-entry"><h3>Insert certification title</h3><p class="certification-organisation">Insert organisation</p><p class="certification-date">Date awarded: Insert date</p></div></li>
+            <li class="certification-item"><div class="certification-logo" aria-hidden="true">LOGO</div><div class="certification-entry"><h3>Insert certification title</h3><p class="certification-organisation">Insert organisation</p><p class="certification-date">Date awarded: Insert date</p></div></li>
+            <li class="certification-item"><div class="certification-logo" aria-hidden="true">LOGO</div><div class="certification-entry"><h3>Insert certification title</h3><p class="certification-organisation">Insert organisation</p><p class="certification-date">Date awarded: Insert date</p></div></li>
+            <li class="certification-item"><div class="certification-logo" aria-hidden="true">LOGO</div><div class="certification-entry"><h3>Insert certification title</h3><p class="certification-organisation">Insert organisation</p><p class="certification-date">Date awarded: Insert date</p></div></li>
+            <li class="certification-item"><div class="certification-logo" aria-hidden="true">LOGO</div><div class="certification-entry"><h3>Insert certification title</h3><p class="certification-organisation">Insert organisation</p><p class="certification-date">Date awarded: Insert date</p></div></li>
+          </ol>
+          <button class="certifications-toggle" type="button" aria-expanded="false" hidden>Show more certifications</button>
+        </div>
+      </section>
+      <section class="project-case about-case interests-case" id="interests" aria-labelledby="interests-title">
+        <div class="project-case-inner">
+          <header class="case-heading"><h2 id="interests-title">Interests</h2></header>
+          <div class="interests-list">
+            <article class="interest-entry interest-entry-engineering">
+              <div class="interest-copy"><h3>Engineering Projects</h3><p>I'm extremely passionate about biomimetic engineering and have been working on designs for multiple ornithopters with novel actuation mechanisms for some time now. I also like to fly and build remote controlled airplanes and other drones.</p></div>
+              <div class="interest-photos" role="group" aria-label="Engineering project photos"><figure class="interest-photo interest-photo-image"><img src="assets/first robot.png" alt="First prototype robot"></figure><figure class="interest-photo interest-photo-image"><img src="assets/crashed plane.jpg" alt="Remote-controlled plane after a crash"></figure></div>
+            </article>
+            <article class="interest-entry interest-entry-motorcycles">
+              <div class="interest-copy"><h3>Motorcycles</h3><p>I enjoy going on motorcycle rides to new places with my girlfriend. I also like to do all the maintenance and mechanical work for both of our bikes.</p></div>
+              <div class="interest-photos" role="group" aria-label="Motorcycle photos"><figure class="interest-photo interest-photo-image"><img src="assets/coastal bikes.png" alt="Motorcycle ride along the coast"></figure><figure class="interest-photo interest-photo-image"><img src="assets/bikes photo.jpg" alt="Two motorcycles parked beside a lake"></figure></div>
+            </article>
+            <article class="interest-entry">
+              <div class="interest-copy"><h3>Video Games</h3><p>My favourite genre are sandbox and automation games like Factorio and Minecraft. I enjoy building large production pipelines to automate everything I can and achieving maximum efficiency.</p></div>
+              <div class="interest-photos" role="group" aria-label="Video game photo"><figure class="interest-photo interest-photo-image"><img src="assets/Factorio ss.png" alt="Factorio factory screenshot"></figure></div>
+            </article>
+            <article class="interest-entry">
+              <div class="interest-copy"><h3>Languages</h3><p>Over the past few years I have been learning Russian and I've managed to get to a semi proficient level. I have also recently started learning Mandarin Chinese.</p></div>
+            </article>
+          </div>
+        </div>
+      </section>
     </div>
-    <footer class="site-footer project-footer"><span>© <span id="year">2026</span></span><span>Insert info here</span></footer>
+    <footer class="site-footer project-footer"><span>© <span id="year">2026</span></span><span>Andrew Mccaffrey</span></footer>
   </main>
 </body>
 </html>

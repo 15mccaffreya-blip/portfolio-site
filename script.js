@@ -39,6 +39,7 @@ if (asciiCanvas && asciiContext) {
 	const sampleCanvas = document.createElement('canvas');
 	const sampleContext = sampleCanvas.getContext('2d', { willReadFrequently: true });
 	const keyBackgroundToBlack = document.body.dataset.asciiKeyBackground === 'black';
+	const saturationBoost = Math.max(1, Number(document.body.dataset.asciiSaturation) || 1);
 	let canvasWidth = 0;
 	let canvasHeight = 0;
 	let animationFrame = 0;
@@ -55,7 +56,22 @@ if (asciiCanvas && asciiContext) {
 		const sidebarWidth = document.querySelector('.site-sidebar')?.getBoundingClientRect().width ?? 0;
 		const homeBounds = document.querySelector('.home-section')?.getBoundingClientRect();
 		const isPhone = window.matchMedia('(max-width: 560px)').matches;
-		if (keyBackgroundToBlack && isPhone) {
+		const isRocketEffect = document.body.dataset.asciiEffect === 'rocket';
+		if (document.body.dataset.asciiLayout === 'portrait') {
+			const availableWidth = Math.max(0, canvasWidth - sidebarWidth - 24);
+			const width = availableWidth * (isPhone ? 1.45 : 0.58);
+			const bioBounds = document.querySelector('.about-bio')?.getBoundingClientRect();
+			const bioBottom = bioBounds ? bioBounds.bottom - (homeBounds?.top ?? 0) : 0;
+			const top = isPhone ? Math.max(canvasHeight * 0.4, bioBottom + 24) : canvasHeight * 0.1;
+			return {
+				left: isPhone ? sidebarWidth + 12 - (width - availableWidth) / 2 : sidebarWidth + 12 + availableWidth * 0.5,
+				top,
+				width,
+				height: Math.max(0, Math.min(canvasHeight * (isPhone ? 0.8 : 0.78), canvasHeight - top - 12)),
+				alignBottom: isPhone
+			};
+		}
+		if (isRocketEffect && isPhone) {
 			const availableWidth = Math.max(0, canvasWidth - sidebarWidth - 24);
 			const width = 480;
 			const height = 360;
@@ -95,11 +111,11 @@ if (asciiCanvas && asciiContext) {
 			};
 		}
 		return {
-			left: sidebarWidth + 12 + (keyBackgroundToBlack ? Math.max(0, canvasWidth - sidebarWidth - 24) * 0.16 : 0),
-			top: keyBackgroundToBlack ? 38 : 12,
+			left: sidebarWidth + 12 + (isRocketEffect ? Math.max(0, canvasWidth - sidebarWidth - 24) * 0.16 : 0),
+			top: isRocketEffect ? 38 : 12,
 			width: Math.max(0, canvasWidth - sidebarWidth - 24),
 			height: Math.max(0, canvasHeight - 24),
-			alignBottom: keyBackgroundToBlack
+			alignBottom: isRocketEffect
 		};
 	};
 
@@ -151,7 +167,13 @@ if (asciiCanvas && asciiContext) {
 			let blue = pixels[pixelIndex + 2];
 				const backgroundDistance = Math.hypot(red - backgroundRed, green - backgroundGreen, blue - backgroundBlue);
 				if (keyBackgroundToBlack && backgroundDistance < 48) continue;
-				const isRocketRed = keyBackgroundToBlack && red > green * 1.2 && red > blue * 1.2;
+				if (saturationBoost > 1) {
+					const luminance = red * 0.2126 + green * 0.7152 + blue * 0.0722;
+					red = Math.max(0, Math.min(255, luminance + (red - luminance) * saturationBoost));
+					green = Math.max(0, Math.min(255, luminance + (green - luminance) * saturationBoost));
+					blue = Math.max(0, Math.min(255, luminance + (blue - luminance) * saturationBoost));
+				}
+				const isRocketRed = document.body.dataset.asciiEffect === 'rocket' && red > green * 1.2 && red > blue * 1.2;
 				if (isRocketRed) {
 					const average = (red + green + blue) / 3;
 					red = Math.min(255, average + (red - average) * 1.32);
@@ -341,6 +363,22 @@ if (submenuToggles.length) {
 	document.addEventListener('keydown', (event) => {
 		if (event.key === 'Escape') submenuToggles.forEach(closeSubmenu);
 	});
+}
+
+const certificationsList = document.querySelector('.certifications-list');
+const certificationsToggle = document.querySelector('.certifications-toggle');
+
+if (certificationsList && certificationsToggle) {
+	const hasExtraCertifications = certificationsList.children.length > 3;
+	certificationsToggle.hidden = !hasExtraCertifications;
+
+	if (hasExtraCertifications) {
+		certificationsToggle.addEventListener('click', () => {
+			const isExpanded = certificationsList.classList.toggle('is-expanded');
+			certificationsToggle.setAttribute('aria-expanded', String(isExpanded));
+			certificationsToggle.textContent = isExpanded ? 'Show fewer certifications' : 'Show more certifications';
+		});
+	}
 }
 
 document.querySelector('#year').textContent = new Date().getFullYear();

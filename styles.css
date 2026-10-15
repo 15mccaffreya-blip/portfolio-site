@@ -22,6 +22,7 @@ body::before { position: fixed; z-index: 0; inset: 0; content: ''; pointer-event
 a { color: inherit; }
 .ascii-background { position: fixed; z-index: 0; inset: 0; width: 100%; height: 100%; opacity: .88; pointer-events: none; }
 body[data-ascii-key-background="black"] .ascii-background { opacity: 1; }
+body[data-ascii-layout="portrait"] .ascii-background { opacity: .78; }
 .skip-link { position: absolute; z-index: 20; top: 8px; left: 8px; transform: translateY(-150%); padding: 12px 16px; background: var(--lime); color: var(--ink); }
 .skip-link:focus { transform: translateY(0); }
 .site-header { height: 78px; padding: 0 7.1%; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
@@ -103,6 +104,7 @@ h1, h2, h3, p { margin-top: 0; }
   .contact { padding-top: 82px; }
 }
 @media (max-width: 560px) {
+  body[data-ascii-layout="portrait"] .ascii-background { opacity: .48; }
   .site-header { position: relative; z-index: 5; }
   .menu-toggle { width: 42px; height: 42px; display: grid; align-content: center; justify-items: center; gap: 6px; border: 1px solid var(--line); background: transparent; cursor: pointer; }
   .menu-toggle span { width: 17px; height: 1px; background: var(--ink); transition: transform .2s ease; }
@@ -302,6 +304,89 @@ h1, h2, h3 { color: var(--ice); font-family: var(--jetbrains); font-weight: 400;
 .about-case .project-case-inner { display: flex; min-height: calc(100vh - 112px); align-items: center; }
 .about-case .case-heading { width: 100%; margin: 0; }
 .about-case .case-heading h2 { color: var(--ice); font: 400 clamp(42px, 6vw, 72px)/1.2 var(--jetbrains); text-align: left; }
+.experience-case { min-height: auto; display: block; overflow: visible; padding: 64px clamp(28px, 7vw, 104px) 76px; }
+.experience-case .project-case-inner { display: block; min-height: 0; margin: 0; }
+.experience-case .case-heading { margin-bottom: 30px; }
+.experience-case .case-heading h2 { font-size: 42px; }
+.experience-list { width: min(100%, 900px); margin: 0; padding: 0; list-style: none; }
+.experience-item { position: relative; display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 18px; margin: 0; padding: 0 0 22px; border-bottom: 1px solid var(--line); }
+.experience-item + .experience-item { padding-top: 18px; }
+.experience-item::before { position: absolute; top: 54px; bottom: -1px; left: 26px; width: 1px; background: #48525a; content: ''; }
+.experience-item:last-child { border-bottom: 0; }
+.experience-logo { position: relative; z-index: 1; width: 54px; height: 54px; display: block; overflow: hidden; border: 1px solid rgb(196 237 255 / 28%); border-radius: 8px; box-shadow: 0 0 0 3px rgb(196 237 255 / 5%); color: #aab5bc; font: 8px var(--jetbrains); }
+.experience-logo img { display: block; width: 100%; height: 100%; min-width: 0; min-height: 0; object-fit: contain; }
+.logo-farm, .logo-motorcycle { background: #fff; }
+.logo-university { background: #017fb0; }
+.logo-digital { background: #71b34f; }
+.logo-engineering { background: #121314; }
+.logo-tomorrows-engineers { display: grid; place-items: center; background: #1d4f6d; color: var(--ice); font: 11px var(--jetbrains); }
+.experience-entry h3 { margin: 0 0 3px; color: var(--ice); font: 500 16px/1.35 var(--jetbrains); }
+.experience-employer { margin: 0 0 3px; color: var(--white); font: 11px/1.5 var(--dejavu); }
+.experience-meta { margin: 0; color: var(--muted); font: 10px/1.6 var(--dejavu); }
+.experience-description { margin: 12px 0 0; color: var(--white); font: 11px/1.7 var(--dejavu); }
+.experience-responsibilities { display: grid; gap: 4px; margin: 12px 0 0; padding: 0; color: var(--white); font: 11px/1.7 var(--dejavu); list-style: none; }
+.experience-responsibilities li { display: grid; grid-template-columns: 1em minmax(0, 1fr); gap: 6px; }
+.experience-responsibilities li::before { color: var(--ice); content: '>'; font-family: var(--jetbrains); }
+.certifications-case { min-height: auto; display: block; overflow: visible; padding: 64px clamp(28px, 7vw, 104px) 76px; }
+.certifications-case .project-case-inner { display: block; min-height: 0; margin: 0; }
+.certifications-case .case-heading { margin-bottom: 30px; }
+.certifications-case .case-heading h2 { font-size: 42px; }
+.certifications-list { width: min(100%, 900px); margin: 0; padding: 0; list-style: none; }
+.certification-item { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 18px; padding: 0 0 20px; border-bottom: 1px solid var(--line); }
+.certification-item + .certification-item { padding-top: 18px; }
+.certification-item:nth-child(n + 4) { display: none; }
+.certifications-list.is-expanded .certification-item:nth-child(n + 4) { display: grid; }
+.certification-logo { display: grid; width: 54px; height: 54px; place-items: center; border: 1px solid rgb(196 237 255 / 28%); border-radius: 8px; background: #192a34; color: var(--muted); font: 8px var(--jetbrains); }
+.certification-entry h3 { margin: 0 0 3px; color: var(--ice); font: 500 16px/1.35 var(--jetbrains); }
+.certification-organisation { margin: 0 0 3px; color: var(--white); font: 11px/1.5 var(--dejavu); }
+.certification-date { margin: 0; color: var(--muted); font: 10px/1.6 var(--dejavu); }
+.certifications-toggle { display: flex; justify-content: space-between; align-items: center; gap: 25px; min-width: 220px; margin-top: 18px; border: 1px solid var(--line); border-radius: 0; padding: 13px 14px; background: transparent; color: var(--ice); font: 12px var(--jetbrains); cursor: pointer; }
+.certifications-toggle::after { content: '\2193'; font-size: 14px; line-height: 1; }
+.certifications-toggle[aria-expanded="true"]::after { content: '\2191'; }
+.certifications-toggle:hover, .certifications-toggle:focus-visible { border-color: var(--ice); background: var(--surface-raised); color: var(--ice); }
+.interests-case { min-height: auto; display: block; overflow: visible; padding: 64px clamp(28px, 7vw, 104px) 76px; }
+.interests-case .project-case-inner { display: block; min-height: 0; margin: 0; }
+.interests-case .case-heading { margin-bottom: 30px; }
+.interests-case .case-heading h2 { font-size: 42px; }
+.interests-list { width: min(100%, 900px); }
+.interest-entry { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .9fr); gap: 28px; padding: 0 0 24px; border-bottom: 1px solid var(--line); }
+.interest-entry + .interest-entry { padding-top: 24px; }
+.interest-copy h3 { margin: 0 0 8px; color: var(--ice); font: 500 16px/1.35 var(--jetbrains); }
+.interest-copy p { margin: 0; color: var(--white); font: 11px/1.75 var(--dejavu); }
+.interest-photos { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-content: start; }
+.interest-photo:not(.interest-photo-image) { aspect-ratio: 1.45 / 1; border: 1px solid #394148; background: #15191c; }
+.interest-photo-image { margin: 0; }
+.interest-photo-image img { display: block; width: 100%; height: auto; }
+.interest-entry-motorcycles, .interest-entry-engineering { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 24px; row-gap: 16px; }
+.interest-entry-motorcycles .interest-copy, .interest-entry-engineering .interest-copy { grid-column: 1; grid-row: 1; }
+.interest-entry-motorcycles .interest-photos, .interest-entry-engineering .interest-photos { display: contents; }
+.interest-entry-motorcycles .interest-photo-image:first-child, .interest-entry-engineering .interest-photo-image:last-child { grid-column: 2; grid-row: 1 / span 2; align-self: stretch; width: 100%; height: 100%; min-height: 0; }
+.interest-entry-motorcycles .interest-photo-image:last-child, .interest-entry-engineering .interest-photo-image:first-child { grid-column: 1; grid-row: 2; align-self: stretch; width: 100%; height: 100%; min-height: 0; }
+.interest-entry-motorcycles .interest-photo-image img, .interest-entry-engineering .interest-photo-image img { width: 100%; height: 100%; object-fit: contain; object-position: right bottom; }
+.interest-entry-motorcycles .interest-photo-image:last-child img, .interest-entry-engineering .interest-photo-image:first-child img { object-position: left bottom; }
+.education-case { min-height: auto; display: block; overflow: visible; padding: 64px clamp(28px, 7vw, 104px) 76px; }
+.education-case .project-case-inner { display: block; min-height: 0; margin: 0; }
+.education-case .case-heading { margin-bottom: 30px; }
+.education-case .case-heading h2 { font-size: 42px; }
+.education-list { width: min(100%, 900px); margin: 0; padding: 0; list-style: none; }
+.education-item { position: relative; display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 18px; margin: 0; padding: 0 0 24px; border-bottom: 1px solid var(--line); }
+.education-item + .education-item { padding-top: 22px; }
+.education-item::before { position: absolute; top: 54px; bottom: -1px; left: 26px; width: 1px; background: #48525a; content: ''; }
+.education-item:last-child { border-bottom: 0; }
+.education-logo { position: relative; z-index: 1; width: 54px; height: 54px; display: block; overflow: hidden; border: 1px solid rgb(196 237 255 / 28%); border-radius: 8px; background: var(--paper); color: var(--muted); font: 8px var(--jetbrains); }
+.education-logo img { display: block; width: 100%; height: 100%; min-width: 0; min-height: 0; object-fit: contain; }
+.education-logo.logo-university { background: #017fb0; }
+.education-logo.logo-nelson { background: #18273e; }
+.education-logo.logo-engineering { background: #121314; }
+.education-entry h3 { margin: 0 0 6px; color: var(--ice); font: 500 16px/1.35 var(--jetbrains); }
+.education-level { margin: 0; color: var(--muted); font: 10px/1.6 var(--dejavu); }
+.education-subjects { margin-top: 18px; padding: 0; border: 0; background: transparent; }
+.education-subjects h4 { margin: 0 0 8px; color: var(--ice); font: 10px var(--jetbrains); }
+.education-grades { display: grid; gap: 5px; margin: 0; padding: 0; color: var(--white); font: 10px/1.5 var(--dejavu); list-style: none; }
+.education-grades li { display: grid; grid-template-columns: 1em 110px 35px max-content; column-gap: 6px; align-items: baseline; min-width: 0; }
+.education-grades li::before { grid-column: 1; color: var(--ice); content: '>'; font-family: var(--jetbrains); }
+.education-grades li span:first-of-type { grid-column: 2; min-width: 0; }
+.education-grades li span:last-of-type { grid-column: 4; }
 .case-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 30px; }
 .case-heading .project-label { margin: 0; color: var(--ice); font: 10px var(--jetbrains); text-transform: uppercase; }
 .case-heading h2 { margin: 0; color: var(--ice); font: 400 clamp(25px, 3vw, 38px)/1.2 var(--jetbrains); text-align: right; }
@@ -340,6 +425,61 @@ h1, h2, h3 { color: var(--ice); font-family: var(--jetbrains); font-weight: 400;
   .project-case { min-height: 100svh; padding: 30px 18px; }
   .about-case .project-case-inner { min-height: calc(100svh - 60px); }
   .about-case .case-heading h2 { font-size: 28px; }
+  .experience-case { padding: 36px 18px 54px; }
+  .experience-case .case-heading { margin-bottom: 22px; }
+  .experience-case .case-heading h2 { font-size: 25px; }
+  .experience-item { grid-template-columns: 42px minmax(0, 1fr); gap: 12px; padding-bottom: 16px; }
+  .experience-item + .experience-item { padding-top: 14px; }
+  .experience-item::before { top: 42px; left: 20px; }
+  .experience-logo { width: 42px; height: 42px; font-size: 7px; }
+  .experience-entry h3 { font-size: 11px; }
+  .experience-employer { font-size: 9px; }
+  .experience-meta { font-size: 8px; }
+  .experience-description { margin-top: 8px; font-size: 9px; }
+  .certifications-case { min-height: auto; padding: 36px 18px 54px; }
+  .about-case.certifications-case .project-case-inner { min-height: 0; }
+  .certifications-case .case-heading { margin-bottom: 22px; }
+  .certifications-case .case-heading h2 { font-size: 25px; }
+  .certification-item { grid-template-columns: 42px minmax(0, 1fr); gap: 12px; padding-bottom: 16px; }
+  .certification-item + .certification-item { padding-top: 14px; }
+  .certification-logo { width: 42px; height: 42px; font-size: 7px; }
+  .certification-entry h3 { font-size: 11px; }
+  .certification-organisation { font-size: 9px; }
+  .certification-date, .certifications-toggle { font-size: 8px; }
+  .interests-case { min-height: auto; padding: 36px 18px 54px; }
+  .about-case.interests-case .project-case-inner { min-height: 0; }
+  .interests-case .case-heading { margin-bottom: 22px; }
+  .interests-case .case-heading h2 { font-size: 25px; }
+  .interest-entry { grid-template-columns: 1fr; gap: 14px; padding-bottom: 18px; }
+  .interest-entry + .interest-entry { padding-top: 18px; }
+  .interest-copy h3 { font-size: 11px; }
+  .interest-copy p { font-size: 9px; }
+  .interest-photos { grid-template-columns: 1fr; gap: 8px; }
+  .interest-photo:not(.interest-photo-image) { aspect-ratio: 1.25 / 1; }
+  .interest-entry-motorcycles, .interest-entry-engineering { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; }
+  .interest-entry-motorcycles .interest-copy,
+  .interest-entry-motorcycles .interest-photo-image:first-child,
+  .interest-entry-motorcycles .interest-photo-image:last-child,
+  .interest-entry-engineering .interest-copy,
+  .interest-entry-engineering .interest-photo-image:first-child,
+  .interest-entry-engineering .interest-photo-image:last-child { grid-column: 1; grid-row: auto; width: 100%; height: auto; }
+  .interest-entry-motorcycles .interest-photo-image img,
+  .interest-entry-engineering .interest-photo-image img { height: auto; }
+  .education-case { min-height: auto; padding: 36px 18px 54px; }
+  .about-case.education-case .project-case-inner { min-height: 0; }
+  .education-case .case-heading { margin-bottom: 22px; }
+  .education-case .case-heading h2 { font-size: 25px; }
+  .education-item { grid-template-columns: 42px minmax(0, 1fr); gap: 12px; padding-bottom: 18px; }
+  .education-item + .education-item { padding-top: 16px; }
+  .education-item::before { top: 42px; left: 20px; }
+  .education-logo { width: 42px; height: 42px; font-size: 7px; }
+  .education-entry h3 { font-size: 11px; }
+  .education-level { font-size: 8px; }
+  .education-subjects { margin-top: 12px; }
+  .education-subjects h4 { font-size: 8px; }
+  .education-grades { font-size: 8px; }
+  .education-grades li { grid-template-columns: 1em 80px minmax(0, 1fr); }
+  .education-grades li span:last-of-type { grid-column: 3; overflow-wrap: anywhere; }
   .case-heading { display: block; margin-bottom: 18px; }
   .case-heading .project-label { margin-bottom: 8px; font-size: 8px; }
   .case-heading h2 { font-size: 18px; text-align: left; }
@@ -353,4 +493,9 @@ h1, h2, h3 { color: var(--ice); font-family: var(--jetbrains); font-weight: 400;
 }
 @media (prefers-reduced-motion: reduce) {
   .case-photo-surface { transform: none !important; }
+}
+@media (max-width: 340px) {
+  .education-grades li { grid-template-columns: 1em minmax(0, 1fr); row-gap: 2px; }
+  .education-grades li span:first-of-type { white-space: nowrap; }
+  .education-grades li span:last-of-type { grid-column: 2; grid-row: 2; }
 }
