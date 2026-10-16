@@ -381,4 +381,101 @@ if (certificationsList && certificationsToggle) {
 	}
 }
 
+const projectGallery = document.querySelector('.project-gallery');
+if (projectGallery) {
+	const galleryStage = projectGallery.querySelector('[data-gallery-stage]');
+	const galleryCount = projectGallery.querySelector('[data-gallery-count]');
+	const galleryThumbnails = projectGallery.querySelector('[data-gallery-thumbnails]');
+	const previousPhoto = projectGallery.querySelector('[data-gallery-previous]');
+	const nextPhoto = projectGallery.querySelector('[data-gallery-next]');
+	let galleryItems = [];
+	let galleryIndex = 0;
+	let activeGalleryTrigger = null;
+
+	const renderGallery = () => {
+		const item = galleryItems[galleryIndex];
+		galleryStage.replaceChildren();
+		if (item.type === 'image') {
+			const image = item.source.cloneNode();
+			image.className = 'project-gallery-image';
+			image.removeAttribute('data-project-gallery-image');
+			galleryStage.append(image);
+		} else {
+			const placeholder = item.source.cloneNode(true);
+			placeholder.classList.add('project-gallery-placeholder');
+			placeholder.removeAttribute('data-parallax-layer');
+			placeholder.style.transform = 'none';
+			galleryStage.append(placeholder);
+		}
+		galleryCount.textContent = `${galleryIndex + 1} / ${galleryItems.length}`;
+		previousPhoto.hidden = galleryItems.length < 2;
+		nextPhoto.hidden = galleryItems.length < 2;
+		projectGallery.querySelector('.project-gallery-viewer').classList.toggle('is-single-photo', galleryItems.length < 2);
+		galleryThumbnails.hidden = galleryItems.length < 2;
+		galleryThumbnails.replaceChildren();
+		if (galleryItems.length < 2) return;
+
+		galleryItems.forEach((galleryItem, index) => {
+			const thumbnail = document.createElement('button');
+			thumbnail.type = 'button';
+			thumbnail.className = 'project-gallery-thumbnail';
+			thumbnail.setAttribute('aria-label', `Show photo ${index + 1}`);
+			thumbnail.setAttribute('aria-pressed', String(index === galleryIndex));
+			if (galleryItem.type === 'image') {
+				const image = galleryItem.source.cloneNode();
+				image.removeAttribute('data-project-gallery-image');
+				image.alt = '';
+				thumbnail.append(image);
+			} else {
+				thumbnail.append(galleryItem.source.cloneNode(true));
+			}
+			thumbnail.addEventListener('click', () => {
+				galleryIndex = index;
+				renderGallery();
+			});
+			galleryThumbnails.append(thumbnail);
+		});
+	};
+
+	const moveGallery = (direction) => {
+		galleryIndex = (galleryIndex + direction + galleryItems.length) % galleryItems.length;
+		renderGallery();
+	};
+
+	for (const trigger of document.querySelectorAll('[data-project-gallery-trigger]')) {
+		trigger.addEventListener('click', () => {
+			const figure = trigger.closest('.case-photo');
+			const project = trigger.closest('.project-case');
+			const placeholder = figure?.querySelector('.case-photo-surface');
+			if (!figure || !project || !placeholder) return;
+			activeGalleryTrigger = trigger;
+			const projectImages = [...figure.querySelectorAll('.case-photo-gallery-items img')];
+			galleryItems = projectImages.length
+				? projectImages.map(source => ({ type: 'image', source }))
+				: [{ type: 'placeholder', source: placeholder }];
+			galleryIndex = 0;
+			renderGallery();
+			projectGallery.showModal();
+		});
+	}
+
+	projectGallery.querySelector('.project-gallery-close').addEventListener('click', () => projectGallery.close());
+	previousPhoto.addEventListener('click', () => moveGallery(-1));
+	nextPhoto.addEventListener('click', () => moveGallery(1));
+	projectGallery.addEventListener('click', (event) => {
+		if (event.target === projectGallery) projectGallery.close();
+	});
+	projectGallery.addEventListener('close', () => activeGalleryTrigger?.focus());
+	document.addEventListener('keydown', (event) => {
+		if (event.key === 'Escape' && projectGallery.open) {
+			event.preventDefault();
+			projectGallery.close();
+		}
+	}, true);
+	projectGallery.addEventListener('keydown', (event) => {
+		if (event.key === 'ArrowLeft' && galleryItems.length > 1) moveGallery(-1);
+		if (event.key === 'ArrowRight' && galleryItems.length > 1) moveGallery(1);
+	});
+}
+
 document.querySelector('#year').textContent = new Date().getFullYear();
