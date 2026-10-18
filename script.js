@@ -1,3 +1,196 @@
+const decodeGifLzw = (minCodeSize, data, pixelCount) => {
+	const clearCode = 1 << minCodeSize;
+	const endCode = clearCode + 1;
+	const prefix = new Uint16Array(4096);
+	const suffix = new Uint8Array(4096);
+	const stack = new Uint8Array(4097);
+	const output = new Uint8Array(pixelCount);
+	for (let index = 0; index < clearCode; index += 1) suffix[index] = index;
+	let codeSize = minCodeSize + 1;
+	let nextCode = endCode + 1;
+	let previousCode = -1;
+	let firstByte = 0;
+	let bitBuffer = 0;
+	let bitCount = 0;
+	let dataPosition = 0;
+	let outputPosition = 0;
+	while (outputPosition < pixelCount) {
+		while (bitCount < codeSize) {
+			if (dataPosition >= data.length) return output;
+			bitBuffer |= data[dataPosition++] << bitCount;
+			bitCount += 8;
+		}
+		let code = bitBuffer & ((1 << codeSize) - 1);
+		bitBuffer >>= codeSize;
+		bitCount -= codeSize;
+		if (code === clearCode) {
+			codeSize = minCodeSize + 1;
+			nextCode = endCode + 1;
+			previousCode = -1;
+			continue;
+		}
+		if (code === endCode) break;
+		if (previousCode === -1) {
+			output[outputPosition++] = suffix[code];
+			previousCode = code;
+			firstByte = code;
+			continue;
+		}
+		const incomingCode = code;
+		let stackSize = 0;
+		if (code >= nextCode) {
+			stack[stackSize++] = firstByte;
+			code = previousCode;
+		}
+		while (code >= clearCode) {
+			stack[stackSize++] = suffix[code];
+			code = prefix[code];
+		}
+		firstByte = suffix[code];
+		stack[stackSize++] = firstByte;
+		if (nextCode < 4096) {
+			prefix[nextCode] = previousCode;
+			suffix[nextCode] = firstByte;
+			nextCode += 1;
+			if (nextCode === (1 << codeSize) && codeSize < 12) codeSize += 1;
+		}
+		previousCode = incomingCode;
+		while (stackSize > 0 && outputPosition < pixelCount) output[outputPosition++] = stack[--stackSize];
+	}
+	return output;
+};
+
+// iOS Safari has no ImageDecoder and won't animate GIFs drawn to a canvas, so frames are decoded here.
+const decodeGifFrames = async (buffer, { maxWidth = 320, isCancelled = () => false, onFirstFrame = null } = {}) => {
+	const bytes = new Uint8Array(buffer);
+	if (bytes[0] !== 0x47 || bytes[1] !== 0x49 || bytes[2] !== 0x46) throw new Error('Not a GIF file.');
+	const width = bytes[6] | (bytes[7] << 8);
+	const height = bytes[8] | (bytes[9] << 8);
+	const screenFlags = bytes[10];
+	let position = 13;
+	let globalPalette = null;
+	if (screenFlags & 0x80) {
+		const paletteSize = 3 << ((screenFlags & 7) + 1);
+		globalPalette = bytes.subarray(position, position + paletteSize);
+		position += paletteSize;
+	}
+
+	const scale = Math.min(1, maxWidth / width);
+	const outputWidth = Math.max(1, Math.round(width * scale));
+	const outputHeight = Math.max(1, Math.round(height * scale));
+	const fullCanvas = document.createElement('canvas');
+	fullCanvas.width = width;
+	fullCanvas.height = height;
+	const fullContext = fullCanvas.getContext('2d');
+	const fullImage = fullContext.createImageData(width, height);
+	const full = fullImage.data;
+	const frames = [];
+	let control = { delay: 100, disposal: 0, transparent: -1 };
+	let lastYield = performance.now();
+
+	while (position < bytes.length) {
+		const marker = bytes[position++];
+		if (marker === 0x3b) break;
+		if (marker === 0x21) {
+			const label = bytes[position++];
+			if (label === 0xf9) {
+				const packed = bytes[position + 1];
+				control = {
+					disposal: (packed >> 2) & 7,
+					transparent: packed & 1 ? bytes[position + 4] : -1,
+					delay: (bytes[position + 2] | (bytes[position + 3] << 8)) * 10
+				};
+			}
+			let extensionSize;
+			while (position < bytes.length && (extensionSize = bytes[position++]) !== 0) position += extensionSize;
+			continue;
+		}
+		if (marker !== 0x2c) continue;
+
+		const left = bytes[position] | (bytes[position + 1] << 8);
+		const top = bytes[position + 2] | (bytes[position + 3] << 8);
+		const frameWidth = bytes[position + 4] | (bytes[position + 5] << 8);
+		const frameHeight = bytes[position + 6] | (bytes[position + 7] << 8);
+		const frameFlags = bytes[position + 8];
+		position += 9;
+		let palette = globalPalette;
+		if (frameFlags & 0x80) {
+			const paletteSize = 3 << ((frameFlags & 7) + 1);
+			palette = bytes.subarray(position, position + paletteSize);
+			position += paletteSize;
+		}
+		const minCodeSize = bytes[position++];
+		const chunks = [];
+		let total = 0;
+		let chunkSize;
+		while (position < bytes.length && (chunkSize = bytes[position++]) !== 0) {
+			chunks.push(bytes.subarray(position, position + chunkSize));
+			position += chunkSize;
+			total += chunkSize;
+		}
+		const data = new Uint8Array(total);
+		let offset = 0;
+		for (const chunk of chunks) {
+			data.set(chunk, offset);
+			offset += chunk.length;
+		}
+		if (!palette) continue;
+
+		const indices = decodeGifLzw(minCodeSize, data, frameWidth * frameHeight);
+		const rowOrder = [];
+		if (frameFlags & 0x40) {
+			for (const [start, step] of [[0, 8], [4, 8], [2, 4], [1, 2]]) {
+				for (let row = start; row < frameHeight; row += step) rowOrder.push(row);
+			}
+		}
+		const before = control.disposal === 3 ? full.slice() : null;
+		for (let row = 0; row < frameHeight; row += 1) {
+			const targetRow = top + (rowOrder.length ? rowOrder[row] : row);
+			if (targetRow >= height) continue;
+			for (let column = 0; column < frameWidth; column += 1) {
+				const x = left + column;
+				if (x >= width) break;
+				const index = indices[row * frameWidth + column];
+				if (index === control.transparent) continue;
+				const paletteOffset = index * 3;
+				const pixelOffset = (targetRow * width + x) * 4;
+				full[pixelOffset] = palette[paletteOffset];
+				full[pixelOffset + 1] = palette[paletteOffset + 1];
+				full[pixelOffset + 2] = palette[paletteOffset + 2];
+				full[pixelOffset + 3] = 255;
+			}
+		}
+
+		fullContext.putImageData(fullImage, 0, 0);
+		const canvas = document.createElement('canvas');
+		canvas.width = outputWidth;
+		canvas.height = outputHeight;
+		const context = canvas.getContext('2d');
+		context.imageSmoothingQuality = 'high';
+		context.drawImage(fullCanvas, 0, 0, outputWidth, outputHeight);
+		const frame = { canvas, delay: control.delay <= 10 ? 100 : control.delay };
+		frames.push(frame);
+		if (frames.length === 1) onFirstFrame?.(frame);
+
+		if (control.disposal === 2) {
+			for (let row = top; row < Math.min(height, top + frameHeight); row += 1) {
+				const start = (row * width + left) * 4;
+				full.fill(0, start, (row * width + Math.min(width, left + frameWidth)) * 4);
+			}
+		} else if (before) {
+			full.set(before);
+		}
+		control = { delay: 100, disposal: 0, transparent: -1 };
+
+		if (performance.now() - lastYield > 12) {
+			await new Promise((resolve) => setTimeout(resolve));
+			lastYield = performance.now();
+			if (isCancelled()) return null;
+		}
+	}
+	return { width, height, frames };
+};
+
 const parallaxLayers = [...document.querySelectorAll('[data-parallax-layer]')];
 
 if (parallaxLayers.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -45,12 +238,9 @@ if (asciiCanvas && asciiContext) {
 	let animationFrame = 0;
 	let frameTimer = 0;
 	let activeObjectUrl = '';
-	let gifDecoder = null;
-	let gifFrameCount = 0;
+	let gifFrames = null;
 	let gifFrameIndex = 0;
 	let loadSequence = 0;
-	let decodingFrame = false;
-	let redrawAfterDecode = false;
 
 	const getArtBounds = () => {
 		const sidebarWidth = document.querySelector('.site-sidebar')?.getBoundingClientRect().width ?? 0;
@@ -124,8 +314,8 @@ if (asciiCanvas && asciiContext) {
 		if (!sourceFrame || !sampleContext) return;
 
 		const bounds = getArtBounds();
-		const sourceWidth = sourceFrame.displayWidth ?? sourceFrame.naturalWidth;
-		const sourceHeight = sourceFrame.displayHeight ?? sourceFrame.naturalHeight;
+		const sourceWidth = sourceFrame.displayWidth ?? sourceFrame.naturalWidth ?? sourceFrame.width;
+		const sourceHeight = sourceFrame.displayHeight ?? sourceFrame.naturalHeight ?? sourceFrame.height;
 		if (!sourceWidth || !sourceHeight) return;
 		const sourceAspect = sourceWidth / sourceHeight;
 		const drawWidth = Math.min(bounds.width, bounds.height * sourceAspect);
@@ -193,43 +383,13 @@ if (asciiCanvas && asciiContext) {
 		}
 	};
 
-	const decodeNextFrame = async (sequence) => {
-		if (!gifDecoder || sequence !== loadSequence || document.hidden) return;
-		if (decodingFrame) {
-			redrawAfterDecode = true;
-			return;
-		}
-		decodingFrame = true;
-		let delay = 100;
-		try {
-			const decoder = gifDecoder;
-			const decoded = await decoder.decode({ frameIndex: gifFrameIndex });
-			const frame = decoded.image;
-			if (sequence !== loadSequence) {
-				frame.close();
-			} else {
-				gifFrameIndex = (gifFrameIndex + 1) % gifFrameCount;
-				delay = Math.max(20, (frame.duration ?? 100000) / 1000);
-				drawAsciiFrame(frame);
-				frame.close();
-			}
-		} catch {
-			if (sequence === loadSequence) console.error('Could not decode configured GIF.');
-		} finally {
-			decodingFrame = false;
-			if (sequence !== loadSequence) {
-				redrawAfterDecode = false;
-				if (gifDecoder && !document.hidden) decodeNextFrame(loadSequence);
-				return;
-			}
-			if (document.hidden || reduceMotion || gifFrameCount <= 1) return;
-			if (redrawAfterDecode) {
-				redrawAfterDecode = false;
-				decodeNextFrame(sequence);
-				return;
-			}
-			frameTimer = window.setTimeout(() => decodeNextFrame(sequence), delay);
-		}
+	const playGifFrame = (sequence) => {
+		if (!gifFrames || sequence !== loadSequence || document.hidden) return;
+		const frame = gifFrames[gifFrameIndex % gifFrames.length];
+		gifFrameIndex = (gifFrameIndex + 1) % gifFrames.length;
+		drawAsciiFrame(frame.canvas);
+		if (reduceMotion || gifFrames.length < 2) return;
+		frameTimer = window.setTimeout(() => playGifFrame(sequence), frame.delay);
 	};
 
 	const drawImageFallback = () => {
@@ -240,6 +400,13 @@ if (asciiCanvas && asciiContext) {
 	const startImageFallback = (file, sequence) => {
 		if (activeObjectUrl) URL.revokeObjectURL(activeObjectUrl);
 		activeObjectUrl = URL.createObjectURL(file);
+		if (!gifImage.isConnected) {
+			// WebKit only animates GIFs that are attached to the document.
+			gifImage.alt = '';
+			gifImage.setAttribute('aria-hidden', 'true');
+			Object.assign(gifImage.style, { position: 'fixed', left: '0', top: '0', width: '1px', height: '1px', opacity: '0.01', pointerEvents: 'none', zIndex: '-1' });
+			document.body.append(gifImage);
+		}
 		gifImage.onload = () => {
 			if (sequence !== loadSequence) return;
 			cancelAnimationFrame(animationFrame);
@@ -256,30 +423,28 @@ if (asciiCanvas && asciiContext) {
 		const sequence = ++loadSequence;
 		cancelAnimationFrame(animationFrame);
 		window.clearTimeout(frameTimer);
-		gifDecoder?.close();
-		gifDecoder = null;
+		gifFrames = null;
 		gifFrameIndex = 0;
 		try {
 			const response = await fetch(path);
 			if (!response.ok) throw new Error(`GIF request failed: ${response.status}`);
 			const file = await response.blob();
-			if (typeof ImageDecoder === 'function' && await ImageDecoder.isTypeSupported('image/gif')) {
-				try {
-					const decoder = new ImageDecoder({ data: await file.arrayBuffer(), type: 'image/gif' });
-				await decoder.tracks.ready;
-				if (sequence !== loadSequence) {
-					decoder.close();
-					return;
-				}
-				gifDecoder = decoder;
-				gifFrameCount = decoder.tracks.selectedTrack.frameCount;
-				await decodeNextFrame(sequence);
+			try {
+				const decoded = await decodeGifFrames(await file.arrayBuffer(), {
+					isCancelled: () => sequence !== loadSequence,
+					onFirstFrame: (frame) => {
+						if (sequence === loadSequence) drawAsciiFrame(frame.canvas);
+					}
+				});
+				if (!decoded || sequence !== loadSequence) return;
+				if (!decoded.frames.length) throw new Error('GIF has no frames.');
+				gifFrames = decoded.frames;
+				playGifFrame(sequence);
 				return;
-				} catch {
+			} catch {
 				if (sequence !== loadSequence) return;
-				}
 			}
-			if (sequence === loadSequence) startImageFallback(file, sequence);
+			startImageFallback(file, sequence);
 		} catch (error) {
 			if (sequence !== loadSequence) return;
 			if (fallbackPath && fallbackPath !== path) {
@@ -310,7 +475,7 @@ if (asciiCanvas && asciiContext) {
 		asciiCanvas.width = Math.round(canvasWidth * pixelRatio);
 		asciiCanvas.height = Math.round(canvasHeight * pixelRatio);
 		asciiContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-		if (gifDecoder) decodeNextFrame(loadSequence);
+		if (gifFrames) playGifFrame(loadSequence);
 		else if (gifImage.complete && gifImage.naturalWidth) drawImageFallback();
 	};
 
@@ -323,7 +488,7 @@ if (asciiCanvas && asciiContext) {
 			cancelAnimationFrame(animationFrame);
 			window.clearTimeout(frameTimer);
 		}
-		else if (gifDecoder) decodeNextFrame(loadSequence);
+		else if (gifFrames) playGifFrame(loadSequence);
 		else if (gifImage.naturalWidth) drawImageFallback();
 	});
 	resizeCanvas();
